@@ -6,8 +6,7 @@
 			"type": "shell",
 			"command": "manimgl",
 			"args": [
-				"rotating_triangle.py",
-				"RotatingTriangle",
+				"triangle_sol.py",
 			],
 			"options": {
 				"cwd": "${workspaceFolder}"
@@ -20,7 +19,7 @@
 				"echo": true,
 				"reveal": "always",
 				"focus": false,
-				"panel": "shared",
+				"panel": "dedicated",
 				"showReuseMessage": true,
 				"clear": false
 			},
