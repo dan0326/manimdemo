@@ -63,10 +63,24 @@ class TriangleSquareRotation(Scene):
         triangle.add(top_dot)
         trace = TracedPath(top_dot.get_center, stroke_color=RED)
         self.add(trace)
+
+        sweep_tracker2 = ValueTracker(0)
+        radius2 = np.linalg.norm(vertex_b-vertex_c)
+        start_angle2=np.arctan2((vertex_b - vertex_c)[1], (vertex_b - vertex_c)[0]) -7/6 * np.pi
+        swept_area2=always_redraw(lambda: Sector(
+            angle=sweep_tracker2.get_value(),
+            radius=radius2,
+            start_angle=start_angle2,
+            arc_center=vertex_a + np.array([0, -2, 0])
+        ).set_fill(YELLOW, opacity=0.5).set_stroke(WHITE, width=1))
+        self.add(swept_area2)
+
         self.play(
-            Rotate(triangle, angle=210 * DEGREES, about_point=vertex_a + np.array([0, -2, 0]), run_time=1)
+            Rotate(triangle, angle=210 * DEGREES, about_point=vertex_a + np.array([0, -2, 0]), run_time=1),
+            sweep_tracker2.animate.set_value(210 * DEGREES),
+            run_time=1
         )
-        self.play(FadeOut(top_dot), run_time=0.5)
+        self.play(FadeOut(top_dot), run_time=0.5) 
         triangle.remove(top_dot)
         # Snapshot 2: the triangle’s second position
         snapshot2 = triangle.copy()
@@ -103,5 +117,3 @@ class TriangleSquareRotation(Scene):
         # Snapshot 4: the triangle’s fourth position
         snapshot4 = triangle.copy()
         self.add(snapshot4)
-
-        #self.embed()
