@@ -91,8 +91,22 @@ class TriangleSquareRotation(Scene):
         triangle.add(top_dot)
         trace = TracedPath(top_dot.get_center, stroke_color=RED)
         self.add(trace)
+
+        sweep_tracker3 = ValueTracker(0)
+        radius3 = np.linalg.norm(vertex_b - vertex_a)
+        start_angle3 = np.arctan2((vertex_b - vertex_a)[1], (vertex_b - vertex_a)[0]) - 2/3 * np.pi
+        swept_area3 = always_redraw(lambda: Sector(
+            angle=sweep_tracker3.get_value(),
+            radius=radius3,
+            start_angle=start_angle3,
+            arc_center=vertex_b + np.array([0, -2, 0])
+        ).set_fill(YELLOW, opacity=0.5).set_stroke(WHITE, width=1))
+        self.add(swept_area3)
+
         self.play(
-            Rotate(triangle, angle=210 * DEGREES, about_point=vertex_b + np.array([0, -2, 0]), run_time=1)
+            Rotate(triangle, angle=210 * DEGREES, about_point=vertex_b + np.array([0, -2, 0]), run_time=1),
+            sweep_tracker3.animate.set_value(210 * DEGREES),
+            run_time=1
         )
         self.play(FadeOut(top_dot), run_time=0.5)
         triangle.remove(top_dot)
@@ -105,15 +119,24 @@ class TriangleSquareRotation(Scene):
         triangle.add(top_dot)
         trace = TracedPath(top_dot.get_center, stroke_color=RED)
         self.add(trace)
-        self.play(
-            Rotate(triangle, angle=150 * DEGREES, about_point=vertex_b)
-        )
-        #self.play(FadeOut(top_dot), run_time=0.5)
-        triangle.remove(top_dot)
+
+        sweep_tracker4 = ValueTracker(0)
+        radius4 = np.linalg.norm(vertex_c - vertex_a)
+        start_angle4 = np.arctan2((vertex_c - vertex_a)[1], (vertex_c - vertex_a)[0]) - 1/2 * np.pi
+        swept_area4 = always_redraw(lambda: Sector(
+            angle=sweep_tracker4.get_value(),
+            radius=radius4,
+            start_angle=start_angle4,
+            arc_center=vertex_b
+        ).set_fill(YELLOW, opacity=0.5).set_stroke(WHITE, width=1))
+        self.add(swept_area4)
 
         self.play(
-            Rotate(triangle, angle=60 * DEGREES, about_point=vertex_b)
+            Rotate(triangle, angle=210 * DEGREES, about_point=vertex_b),
+            sweep_tracker4.animate.set_value(210 * DEGREES),
+            run_time=1
         )
+        triangle.remove(top_dot)
         # Snapshot 4: the triangle’s fourth position
         snapshot4 = triangle.copy()
         self.add(snapshot4)
