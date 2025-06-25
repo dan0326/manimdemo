@@ -33,7 +33,7 @@ class UpperHalfSphere(ThreeDScene):
         )
 
         line = Line3D(
-            start=np.array([-2, -2, 0]),
+            start=np.array([-2, -2, 3]),
             end=np.array([2, 2, 0]),
             color=RED
         )
