@@ -3,12 +3,17 @@ import numpy as np
 
 class UpperHalfSphere(ThreeDScene):
     def construct(self):
+        # camera orientation (ManimGL)
+        self.camera.phi = np.deg2rad(65)
+        self.camera.theta = np.deg2rad(45)
+        
         # Axes for reference
         axes = ThreeDAxes(
             x_range=[-5, 5, 1],
             y_range=[-5, 5, 1],
             z_range=[0, 5, 1],
         )
+        self.add(axes)
 
         # Parametric surface: u=polar angle [0, π/2], v=azimuthal [0, 2π]
         sphere = ParametricSurface(
@@ -22,6 +27,7 @@ class UpperHalfSphere(ThreeDScene):
             resolution=(30, 60),
             color=BLUE_E
         )
+        self.add(sphere)
 
         plane1 = ParametricSurface(
             lambda u, v: np.array([u,v, 1-u-v]),
@@ -31,16 +37,12 @@ class UpperHalfSphere(ThreeDScene):
             color=YELLOW_E,
             opacity=0.5,
         )
+        self.add(plane1)
 
+        # Add a line segment
         line = Line3D(
-            start=np.array([-2, -2, 3]),
-            end=np.array([2, 2, 0]),
-            color=RED
+            start=np.array([-2, -2, 5]),
+            end=np.array([2, 2, -3]),
+            color=GREEN_E
         )
-
-        # camera orientation (ManimGL)
-        self.camera.phi = np.deg2rad(65)
-        self.camera.theta = np.deg2rad(45)
-
-        # add and animate
-        self.add(axes, sphere, plane1, line)
+        self.add(line)
