@@ -8,7 +8,8 @@ def lorenz_system(t, state, sigma=10, rho=28, beta=8/3):
     dzdt = x * y - beta * z
     return [dxdt, dydt, dzdt]
 
-def ode_solution_points(function, state0, time, dt=0.01):
+#this gives points of the lorenz system at given time
+def ode_solution_points(function, state0, time, dt=0.001):
     solution = solve_ivp(
         function,
         t_span=(0, time),
@@ -38,7 +39,7 @@ class LorenzAttractor(InteractiveScene):
         epsilon = 0.001
         evolution_time = 30
         states = [[10, 10, 10+ n *epsilon] for n in range(2)]
-        colors = color_gradient([BLUE, RED], len(states))
+        colors = color_gradient([BLUE, YELLOW], len(states))
         curves = VGroup()
         for state, color in zip(states, colors):
             points = ode_solution_points(lorenz_system, state, evolution_time)
@@ -55,4 +56,6 @@ class LorenzAttractor(InteractiveScene):
         self.play(*(
             ShowCreation(curve, run_time=evolution_time, rate_func=linear)
             for curve in curves
-            ))
+            ),
+            self.frame.animate.reorient(170, 72, 0, (0, 0, -1), 10),
+            run_time=evolution_time)
