@@ -37,7 +37,7 @@ class LorenzAttractor(InteractiveScene):
 
         #Display Solutions
         epsilon = 0.001
-        evolution_time = 30
+        evolution_time = 20
         states = [[10, 10, 10+ n *epsilon] for n in range(2)]
         colors = color_gradient([BLUE, YELLOW], len(states))
         curves = VGroup()
