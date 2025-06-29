@@ -1,0 +1,25 @@
+{
+    "folders": [
+        {
+            "path": "."
+        }
+    ],
+    "settings": {
+        "python_interpreter": "./manimgl/bin/python",
+        "manim_executable": "./manimgl/bin/manimgl"
+    },
+    "build_systems": [
+        {
+            "name": "Run ManimGL",
+            "cmd": ["$project_path/manimgl/bin/manimgl", "$file"],
+            "working_dir": "$project_path",
+            "selector": "source.python",
+            "variants": [
+                {
+                    "name": "Test ManimGL (Scene at Line)",
+                    "cmd": ["$project_path/manimgl/bin/manimgl", "$file", "-se", "$selection"]
+                }
+            ]
+        }
+    ]
+}
