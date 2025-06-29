@@ -22,9 +22,9 @@ class LorenzAttractor(InteractiveScene):
     def construct(self):
         # Set up the 3D axes
         axes = ThreeDAxes(
-            x_range=[-50, 50, 5],
-            y_range=[-50, 50, 5],
-            z_range=[0, 50, 5],
+            x_range=(-50, 50, 5),
+            y_range=(-50, 50, 5),
+            z_range=(0, 50, 5),
             width=16,
             height=16,
             depth=8
