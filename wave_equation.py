@@ -15,6 +15,13 @@ def get_complex_graph(axes, func, delta_x=0.01):
     curve.set_points_smoothly(axes.c2p(*points.T))
     return curve
 
+def get_complex_vector(plane, z, color=YELLOW):
+    z_vect = Vector()
+    z_vect.put_start_and_end_on(plane.n2p(0), plane.n2p(z))
+    z_vect.rotate(TAU/4, axis=z_vect.get_vector())
+    z_vect.set_color(color)
+    return z_vect
+
 class SchrodingerPlay(InteractiveScene):
     def construct(self):
         #axes
@@ -22,7 +29,10 @@ class SchrodingerPlay(InteractiveScene):
         axes= ThreeDAxes(
             x_range=(0, 10),
             y_range=(-x_max, x_max),
-            z_range=(-x_max, x_max)
+            z_range=(-x_max, x_max),
+            width = 10,
+            height=6,
+            depth=6
         )
         self.add(axes)
 
@@ -32,7 +42,9 @@ class SchrodingerPlay(InteractiveScene):
             plane = ComplexPlane(
                 (-x_max, x_max), (-x_max, x_max),
                 background_line_style=dict(stroke_color=BLUE, stroke_width=1, stroke_opacity=1),
-                faded_line_style=dict(stroke_color=BLUE,stroke_width=1, stroke_opacity=0.5)
+                faded_line_style=dict(stroke_color=BLUE,stroke_width=1, stroke_opacity=0.5),
+                height=6,
+                width=6
             )
             plane.rotate(90 * DEGREES, RIGHT)
             plane.rotate(90 * DEGREES, OUT)
@@ -41,7 +53,7 @@ class SchrodingerPlay(InteractiveScene):
         plane= planes[2]
         self.add(plane)
 
-        #show one solution
+        #show graph of one solution
         A=1
         k=1
         w=1
@@ -51,17 +63,17 @@ class SchrodingerPlay(InteractiveScene):
         graph= get_complex_graph(axes, plane_wave)
         self.add(graph)
 
-        #add vector and glow dot on a plane
+        #add solutioin arrow on one plane
+        x=axes.x_axis.p2n(plane.get_center())
+        z_vect = get_complex_vector(plane, plane_wave(x))
         z_dot = GlowDot()
-        z_vect=Vector()
-        x = axes.x_axis.p2n(plane.get_center())
-        z_dot.move_to(plane.n2p(plane_wave(x)))
-        z_vect.put_start_and_end_on(
-            plane.n2p(0),
-            plane.n2p(plane_wave(x))
-        )
-        z_vect.rotate(TAU/4, axis=z_vect.get_vector())
-        z_vect.set_color(YELLOW)
-        self.add(z_dot)
+        z_dot.f_always.move_to(lambda: z_vect.get_end())
         self.add(z_vect)
+        self.add(z_dot)
+
+        #add laplacian and difference vector
+        def laplacian(x):
+            return -1 *(k**2) * plane_wave(x)
+        l_vect = get_complex_vector(plane, laplacian(x), color=BLUE)
+        self.add(l_vect)
 
