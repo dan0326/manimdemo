@@ -1,4 +1,5 @@
 from manimlib import *
+from manimlib.utils import color
 import numpy as np
 
 class UpperHalfSphere(ThreeDScene):
@@ -9,9 +10,9 @@ class UpperHalfSphere(ThreeDScene):
         
         # Axes for reference
         axes = ThreeDAxes(
-            x_range=[-5, 5, 1],
-            y_range=[-5, 5, 1],
-            z_range=[0, 5, 1],
+            x_range=(-5, 5, 1),
+            y_range=(-5, 5, 1),
+            z_range=(0, 5, 1),
         )
         self.add(axes)
 
@@ -22,17 +23,18 @@ class UpperHalfSphere(ThreeDScene):
                 np.sin(u) * np.sin(v),
                 np.cos(u)
             ]),
-            u_range=[0, PI/2],
-            v_range=[0, 2*PI],
+            u_range=(0, PI/2),
+            v_range=(0, 2*PI),
             resolution=(30, 60),
-            color=BLUE_E
+            color=BLUE_E,
+            opacity=0.5
         )
         self.add(sphere)
 
         plane1 = ParametricSurface(
             lambda u, v: np.array([u,v, 1-u-v]),
-            u_range=[-2, 2],
-            v_range=[-2, 2],
+            u_range=(-2, 2),
+            v_range=(-2, 2),
             resolution=(30, 30),
             color=YELLOW_E,
             opacity=0.5,
@@ -40,9 +42,5 @@ class UpperHalfSphere(ThreeDScene):
         self.add(plane1)
 
         # Add a line segment
-        line = Line3D(
-            start=np.array([-2, -2, 5]),
-            end=np.array([2, 2, -3]),
-            color=GREEN_E
-        )
+        line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
         self.add(line)
