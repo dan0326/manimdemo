@@ -9,9 +9,11 @@ class UpperHalfSphere(ThreeDScene):
         self.camera.theta = np.deg2rad(45)
         
         # Axes for reference
+        x_max = 10
+        y_max = 10
         axes = ThreeDAxes(
-            x_range=(-5, 5, 1),
-            y_range=(-5, 5, 1),
+            x_range=(-x_max, x_max, 1),
+            y_range=(-y_max, y_max, 1),
             z_range=(0, 5, 1),
         )
         self.add(axes)
@@ -40,6 +42,15 @@ class UpperHalfSphere(ThreeDScene):
             opacity=0.5,
         )
         self.add(plane1)
+
+        #add another plane
+        plane2 = ParametricSurface(
+            lambda u, v: np.array([u, v, (u**2+v**2)*np.exp(-u)]),
+            u_range=(-10, 10),
+            v_range=(-10, 10),
+            color = BLUE,
+            opacity=0.8)
+        self.add(plane2)
 
         # Add a line segment
         line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
