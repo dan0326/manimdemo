@@ -43,15 +43,22 @@ class UpperHalfSphere(ThreeDScene):
         )
         self.add(plane1)
 
-        #add another plane
+        #add another plane along with its mesh
         plane2 = ParametricSurface(
             lambda u, v: np.array([u, v, (u**2+v**2)*np.exp(-u)]),
             u_range=(-10, 10),
             v_range=(-10, 10),
             color = BLUE,
             opacity=0.8)
+        surface2 = SurfaceMesh(plane2,
+            resolution=(30, 30), 
+            stroke_width=1,
+            stroke_color=WHITE)
         self.add(plane2)
+        self.add(surface2)
 
         # Add a line segment
         line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
         self.add(line)
+
+        self.camera.get_location()
