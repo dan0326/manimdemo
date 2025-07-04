@@ -1,12 +1,11 @@
 from manimlib import *
-from manimlib.utils import color
 import numpy as np
 
 class UpperHalfSphere(ThreeDScene):
     def construct(self):
         # camera orientation (ManimGL)
-        self.camera.phi = np.deg2rad(65)
-        self.camera.theta = np.deg2rad(45)
+        self.frame.set_phi = np.deg2rad(65)
+        self.frame.set_theta = np.deg2rad(45)
         
         # Axes for reference
         x_max = 10
@@ -17,6 +16,10 @@ class UpperHalfSphere(ThreeDScene):
             z_range=(0, 5, 1),
         )
         self.add(axes)
+
+        # Add a line segment
+        line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
+        self.add(line)
 
         # Parametric surface: u=polar angle [0, π/2], v=azimuthal [0, 2π]
         sphere = ParametricSurface(
@@ -43,7 +46,7 @@ class UpperHalfSphere(ThreeDScene):
         )
         self.add(plane1)
 
-        #add another plane along with its mesh
+        #add plane2 along with its mesh
         plane2 = ParametricSurface(
             lambda u, v: np.array([u, v, (u**2+v**2)*np.exp(-u)]),
             u_range=(-10, 10),
@@ -52,13 +55,27 @@ class UpperHalfSphere(ThreeDScene):
             opacity=0.8)
         surface2 = SurfaceMesh(plane2,
             resolution=(30, 30), 
-            stroke_width=1,
-            stroke_color=WHITE)
-        self.add(plane2)
-        self.add(surface2)
+            stroke_width=1.5,
+            stroke_color=GREY_C)
+        surfaceWmesh2 = Group(plane2, surface2)
+        self.add(surfaceWmesh2)
 
-        # Add a line segment
-        line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
-        self.add(line)
+        #add plane3
+        plane3 = ParametricSurface(
+            lambda u,v : np.array([u, v, np.sin(u-v)/(np.abs(u)+np.abs(v))]),
+            u_range=(-10, 10),
+            v_range=(-10, 10),
+            color = BLUE,
+            opacity=0.8)
+        surface3 = SurfaceMesh(plane3,
+            resolution=(30, 30),
+            stroke_width=1.5,
+            stroke_color=GREY_C)
+        surfaceWmesh3 = Group(plane3, surface3)
+        self.add(surfaceWmesh3)
+
+        self.play(ReplacementTransform(surfaceWmesh2, surfaceWmesh3))
+
+        
 
         self.camera.get_location()
