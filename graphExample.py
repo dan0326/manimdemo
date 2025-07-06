@@ -25,4 +25,5 @@ class GraphExample(Scene):
 
         #add labels to graph
         sin_label = axes.get_graph_label(sin_graph, Text("sin(x)"))
-
+        relu_label = axes.get_graph_label(relu_graph, Text("ReLU"))
+        step_label = axes.get_graph_label(step_graph, Tex("step"))
