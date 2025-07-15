@@ -46,5 +46,6 @@ class ceecproblem3DScene(InteractiveScene):
 
         #trying out Tex
         t = Text("Hallo Leute")
-        t.move_to( LEFT)
+        t.shift(LEFT_SIDE)
+        t.shift(TOP)
         self.add(t)
