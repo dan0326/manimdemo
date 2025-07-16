@@ -60,16 +60,18 @@ self.add(surface_with_mesh)
 - Finally, combine them in a `Group` before adding to the scene. This is the preferred pattern.
 
 ```python
-#this is used to mark a area up, so we can draw color inside...
+#this is used to mark a 2D area up, so we can draw color inside...
 def create_area():
-            func = lambda x: 3 * a.get_value() * x**2 + 1 - a.get_value() #this is the desired function, a is a valuretracker
+            func = lambda x:  #this is the target function of x
             area = VMobject()
+            xspan = 1 #this is x's range
             area.set_points_as_corners([
-                *[axes.c2p(x, 0) for x in np.linspace(-1, 1, 100)],
-                *[axes.c2p(x, func(x)) for x in np.linspace(-1, 1, 100)][::-1]
+                *[axes.c2p(x, 0) for x in np.linspace(-xspan, xspan, 100)],
+                *[axes.c2p(x, func(x)) for x in np.linspace(-xspan, xspan, 100)][::-1]
             ])
             area.set_fill(YELLOW, opacity=0.5)
             area.set_stroke(width=0)
             return area
         area = always_redraw(create_area)
         self.add(area)
+```
