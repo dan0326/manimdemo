@@ -1,8 +1,4 @@
 from manimlib import *
-from scipy import integrate
-
-def area_integrand(x, a):
-    return 3 * a * x**2 + 1 - a
 
 class ceecParabola(Scene):
     def construct(self):
