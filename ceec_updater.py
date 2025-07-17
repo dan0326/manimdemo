@@ -55,16 +55,18 @@ class ceecParabola(Scene):
                 if discriminant>0:
                     x1=np.sqrt(discriminant)
                     x2=-np.sqrt(discriminant)
-
-                    dot1 = Dot(axes.c2p(x1, 0), color=GREEN, radius=0.05)
-                    dot2 = Dot(axes.c2p(x2, 0), color=GREEN, radius=0.05)
+                    dot1 = Dot(axes.c2p(x1, 0), radius=0.075)
+                    dot1.set_color(GREEN)
+                    dot2 = Dot(axes.c2p(x2, 0), radius=0.075)
+                    dot2.set_color(GREEN)
                     dots.add(dot1, dot2)
                 elif discriminant == 0:  # One solution (touches x-axis)
-                    dot = Dot(axes.c2p(0, 0), color=RED, radius=0.05)
+                    dot = Dot(axes.c2p(0, 0), radius=0.075)
+                    dot.set_color(RED)
                     dots.add(dot)
             return dots
         intersections = always_redraw(create_intersections)
-        self.add(intersections)    
+        self.add(intersections)
 
         #animate all
         a.set_value(-0.5)
