@@ -59,19 +59,42 @@ self.add(surface_with_mesh)
 - Adjust `resolution`, `stroke_width`, and `stroke_color` for the mesh as needed.
 - Finally, combine them in a `Group` before adding to the scene. This is the preferred pattern.
 
+### Template: Filling Area Under a Curve
+
+When you need to fill the area between a function's graph and the x-axis, use the following template. This is useful for visualizing integrals or highlighting specific regions.
+
+**Template:**
+
 ```python
-#this is used to mark a 2D area up, so we can draw color inside...
+# 1. Define the function and the area object
 def create_area():
-            func = lambda x:  #this is the target function of x
-            area = VMobject()
-            xspan = 1 #this is x's range
-            area.set_points_as_corners([
-                *[axes.c2p(x, 0) for x in np.linspace(-xspan, xspan, 100)],
-                *[axes.c2p(x, func(x)) for x in np.linspace(-xspan, xspan, 100)][::-1]
-            ])
-            area.set_fill(YELLOW, opacity=0.5)
-            area.set_stroke(width=0)
-            return area
-        area = always_redraw(create_area)
-        self.add(area)
+    # Define your function f(x)
+    func = lambda x: x**2  # Example: f(x) = x^2
+
+    # Define the x-axis range for the filled area
+    x_range = (-2, 2)  # Example: from x = -2 to x = 2
+
+    # Create the area VMobject
+    area = VMobject()
+    area.set_points_as_corners([
+        *[axes.c2p(x, 0) for x in np.linspace(x_range[0], x_range[1], 100)],
+        *[axes.c2p(x, func(x)) for x in np.linspace(x_range[0], x_range[1], 100)][::-1]
+    ])
+    # Set the fill color and opacity
+    area.set_fill(BLUE, opacity=0.5)
+    # Remove the stroke
+    area.set_stroke(width=0)
+    return area
+
+# 2. Create the area and add it to the scene
+# Use always_redraw if the function is dynamic (e.g., depends on a ValueTracker)
+area_to_fill = always_redraw(create_area)
+self.add(area_to_fill)
 ```
+
+**Key Points:**
+- Define your mathematical `func` inside the `create_area` function.
+- Specify the `x_range` (a tuple with start and end points) for the area you want to fill.
+- The points for the `VMobject` are created by combining the points on the x-axis with the points on the function's curve.
+- Use `always_redraw` if your function changes dynamically, otherwise a simple call to `create_area()` is sufficient.
+- Customize the `set_fill` color and `opacity` as needed.
