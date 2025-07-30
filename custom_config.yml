@@ -1,9 +1,6 @@
 window:
-  position_string: UR
-  monitor_index: 1
+  monitor_index: 0
+  position: (3600, 0)
   full_screen: False
 camera:
   background_color: "#000000"
-embed:
-  autoreload: True
-ignore_manimlib_modules_on_reload: True
