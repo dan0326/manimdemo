@@ -35,6 +35,21 @@ class LorenzAttractor(InteractiveScene):
         self.frame.reorient(43, 76, 1, IN, 10)
         self.add(axes)
 
+        #add equations
+        equations = Tex(R"""\begin{aligned}{\frac {\mathrm {d} x}{\mathrm {d} t}}&=\sigma (y-x) \\
+            {\frac {\mathrm {d} y}{\mathrm {d} t}}&=x(\rho -z)-y \\
+            {\frac {\mathrm {d} z}{\mathrm {d} t}}&=xy-\beta z 
+            \end{aligned}""",
+            t2c={
+                "x" : RED,
+                "y" : GREEN,
+                "z" : BLUE
+            },
+            font_size=36)
+        equations.fix_in_frame()
+        equations.to_corner(UL)
+        self.play(Write(equations))
+
         #Display Solutions
         epsilon = 0.001
         evolution_time = 20
