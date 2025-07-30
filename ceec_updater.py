@@ -17,6 +17,16 @@ class ceecParabola(Scene):
         )
         self.add(parabola)
 
+        #add integral sign
+        equation = Tex(R"""\int_{-1}^{1}{3a}x^{2}+\left(1-a\right)""",
+            font_size=36,
+            t2c={
+                "a": RED
+            })
+        equation.fix_in_frame();
+        equation.to_corner(UL);
+        self.add(equation);
+
         #add area
         def create_area():
             func = lambda x: 3 * a.get_value() * x**2 + 1 - a.get_value()
@@ -34,9 +44,9 @@ class ceecParabola(Scene):
         #add a value display
         a_label = always_redraw(
             lambda: VGroup(
-            Text("a = ", font_size=36),
-                DecimalNumber(a.get_value(), num_decimal_places=2, font_size=36)
-            ).arrange(RIGHT).to_corner(UL)
+            Tex("a = ", font_size=36),
+                DecimalNumber(a.get_value(), num_decimal_places=2, font_size=32)
+            ).arrange(RIGHT).next_to(equation, DOWN)
         )
         self.add(a_label)
 
