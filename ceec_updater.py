@@ -23,9 +23,17 @@ class ceecParabola(Scene):
             t2c={
                 "a": RED
             })
+        integrated_equation = Tex(R"""\left[ ax^3 + (1-a)x \,\middle|\, \substack{-1 \\ 1} \right]""",
+            font_size=36,
+            t2c={
+                "a": RED
+            })
         equation.fix_in_frame();
+        integrated_equation.fix_in_frame();
         equation.to_corner(UL);
+        integrated_equation.to_corner(UL)
         self.add(equation);
+        self.play(TransformMatchingTex(equation, integrated_equation))
 
         #add area
         def create_area():
@@ -56,7 +64,7 @@ class ceecParabola(Scene):
         lineat_1 = Line(axes.c2p(-1, -4), axes.c2p(-1, 4), color=RED)
         self.add(lineat_1)
 
-        #add intersecting point with x-axis
+        #add intersecting point with x axis
         def create_intersections():
             a_val = a.get_value()
             dots = VGroup()
