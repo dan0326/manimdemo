@@ -32,7 +32,7 @@ class LorenzAttractor(InteractiveScene):
         axes.set_width(FRAME_WIDTH)
         axes.center()
 
-        self.frame.reorient(43, 76, 1, IN, 10)
+        self.frame.reorient(48, 76, 1, (np.float32(0.0), np.float32(-0.0), np.float32(-1.02)), 10.00)
         self.add(axes)
 
         #add equations
@@ -73,4 +73,4 @@ class LorenzAttractor(InteractiveScene):
             for curve in curves
             ),
             self.frame.animate.reorient(170, 72, 0, (0, 0, -1), 10),
-            run_time=evolution_time)
+        run_time=evolution_time)
