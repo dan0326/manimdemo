@@ -1,7 +1,6 @@
 window:
-  monitor_index: 0
-  position: (1920, 0)
   full_screen: False
+  position: (1280, 0)
 camera:
   background_color: "#000000"
   fps: 60
