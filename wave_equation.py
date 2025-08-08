@@ -52,16 +52,27 @@ class SchrodingerPlay(InteractiveScene):
             planes.add(plane)
         plane= planes[2]
         self.add(plane)
+        self.frame.reorient(45, 88, 0, (np.float32(0.0), np.float32(0.23), np.float32(0.49)), 8.00)
 
         #show graph of one solution
         A=1
-        k=1
+        k=0.5
         w=1
-        t=0
+        t_tracker = ValueTracker(0)
+        get_t = t_tracker.get_value
+        time_label = Tex("{time = 0.00}")
+        time_label.to_corner(UR)
+        time_label.fix_in_frame()
+        time_value = time_label.make_number_changeable("0.00")
+        time_value.fix_in_frame()
+        time_value.add_updater(lambda m: m.set_value(get_t()))
+        self.add(time_label)
         def plane_wave(x):
+            t = get_t()
             return A * np.exp(1j *(k*x-w*t))
-        graph= get_complex_graph(axes, plane_wave)
+        graph= always_redraw(lambda: get_complex_graph(axes, plane_wave))
         self.add(graph)
+        self.play(t_tracker.animate.set_value(3), run_time = 3, rate_func = linear)
 
         #add solutioin arrow on one plane
         x=axes.x_axis.p2n(plane.get_center())
@@ -74,6 +85,17 @@ class SchrodingerPlay(InteractiveScene):
         #add laplacian and difference vector
         def laplacian(x):
             return -1 *(k**2) * plane_wave(x)
+        def ddt_psi(x):
+            return -1j * laplacian(x)
         l_vect = get_complex_vector(plane, laplacian(x), color=BLUE)
-        self.add(l_vect)
+        dt_vect = get_complex_vector(plane, ddt_psi(x), color=YELLOW)
+        self.play(
+            self.frame.animate.reorient(71, 77, 0, (np.float32(-0.63), np.float32(-0.27), np.float32(0.61)), 3.38),
+            run_time =2)
+        self.play(GrowArrow(l_vect))
+        self.wait()
+        self.play(TransformFromCopy(l_vect, dt_vect))
+        self.wait()
+        self.add(dt_vect)
+
 
