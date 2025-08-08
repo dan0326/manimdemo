@@ -142,12 +142,13 @@ install_personal_packages() {
         log_info "Installing $package_name in development mode..."
         cd "$package_name"
         pip install -e .
-        cd ..
+        cd "$SCRIPT_DIR"
+        source manimgl/bin/activate
+        python3 -m pip install build && python3 -m build && python3 -m pip install dist/*.whl
         
         log_success "$package_name installed successfully"
     done
     
-    cd "$SCRIPT_DIR"
 }
 
 install_standard_packages() {
