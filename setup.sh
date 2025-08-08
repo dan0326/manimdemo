@@ -105,6 +105,9 @@ install_personal_packages() {
     
     # Create source directory if it doesn't exist
     mkdir -p "$SOURCE_DIR"
+    
+    # Save current directory
+    local original_dir="$PWD"
     cd "$SOURCE_DIR"
     
     for package_name in "${!PERSONAL_REPOS[@]}"; do
@@ -113,7 +116,10 @@ install_personal_packages() {
         
         if [ ! -d "$package_name" ]; then
             log_info "Cloning $package_name..."
-            git clone "$repo_url" "$package_name"
+            if ! git clone "$repo_url" "$package_name"; then
+                log_error "Failed to clone $package_name"
+                continue
+            fi
         else
             log_info "$package_name already exists, updating..."
             cd "$package_name"
@@ -125,7 +131,11 @@ install_personal_packages() {
                 echo
                 if [[ $REPLY =~ ^[Yy]$ ]]; then
                     git stash
-                    git pull
+                    if ! git pull; then
+                        log_error "Failed to pull updates for $package_name"
+                        cd ..
+                        continue
+                    fi
                     log_info "Changes stashed, you can restore them with 'git stash pop'"
                 else
                     log_warning "Skipping update for $package_name"
@@ -133,7 +143,11 @@ install_personal_packages() {
                     continue
                 fi
             else
-                git pull
+                if ! git pull; then
+                    log_error "Failed to pull updates for $package_name"
+                    cd ..
+                    continue
+                fi
             fi
             cd ..
         fi
@@ -141,14 +155,35 @@ install_personal_packages() {
         # Install in development mode
         log_info "Installing $package_name in development mode..."
         cd "$package_name"
-        pip install -e .
-        cd "$SCRIPT_DIR"
-        source manimgl/bin/activate
-        python3 -m pip install build && python3 -m build && python3 -m pip install dist/*.whl
         
-        log_success "$package_name installed successfully"
+        # Install the package in editable mode
+        if pip install -e .; then
+            log_info "$package_name installed in development mode"
+        else
+            log_error "Failed to install $package_name"
+            cd "$SCRIPT_DIR/$SOURCE_DIR"
+            continue
+        fi
+        
+        # Build and install wheel for better performance
+        log_info "Building wheel package for $package_name..."
+        if python -m build --wheel; then
+            log_info "Building wheel successful, installing..."
+            if pip install dist/*.whl --force-reinstall; then
+                log_success "$package_name wheel installed successfully"
+            else
+                log_warning "Wheel installation failed, but editable install is still active"
+            fi
+        else
+            log_warning "Wheel build failed for $package_name, using editable install"
+        fi
+        
+        # Return to source directory
+        cd "$SCRIPT_DIR/$SOURCE_DIR"
     done
     
+    # Return to original directory
+    cd "$original_dir"
 }
 
 install_standard_packages() {
@@ -160,9 +195,12 @@ install_standard_packages() {
     fi
     
     # Install with progress bar and better output
-    pip install -r requirements.txt --progress-bar on
-    
-    log_success "Standard packages installed successfully"
+    if pip install -r requirements.txt --progress-bar on; then
+        log_success "Standard packages installed successfully"
+    else
+        log_error "Failed to install some packages from requirements.txt"
+        return 1
+    fi
 }
 
 verify_installation() {
@@ -218,8 +256,20 @@ main() {
         create_venv
     fi
     
-    install_personal_packages
-    install_standard_packages
+    # Install packages with error handling
+    if install_personal_packages; then
+        log_success "Personal packages installation completed"
+    else
+        log_error "Personal packages installation had issues"
+    fi
+    
+    if install_standard_packages; then
+        log_success "Standard packages installation completed"
+    else
+        log_error "Standard packages installation failed"
+        exit 1
+    fi
+    
     verify_installation
     show_usage_info
 }
