@@ -156,6 +156,19 @@ install_personal_packages() {
         log_info "Installing $package_name in development mode..."
         cd "$package_name"
         
+        # Build and install wheel for better performance
+        log_info "Building wheel package for $package_name..."
+        if python -m build --wheel; then
+            log_info "Building wheel successful, installing..."
+            if pip install dist/*.whl; then
+                log_success "$package_name wheel installed successfully"
+            else
+                log_warning "Wheel installation failed, but editable install is still active"
+            fi
+        else
+            log_warning "Wheel build failed for $package_name, using editable install"
+        fi
+
         # Install the package in editable mode
         if pip install -e .; then
             log_info "$package_name installed in development mode"
@@ -163,19 +176,6 @@ install_personal_packages() {
             log_error "Failed to install $package_name"
             cd "$SCRIPT_DIR/$SOURCE_DIR"
             continue
-        fi
-        
-        # Build and install wheel for better performance
-        log_info "Building wheel package for $package_name..."
-        if python -m build --wheel; then
-            log_info "Building wheel successful, installing..."
-            if pip install dist/*.whl --force-reinstall; then
-                log_success "$package_name wheel installed successfully"
-            else
-                log_warning "Wheel installation failed, but editable install is still active"
-            fi
-        else
-            log_warning "Wheel build failed for $package_name, using editable install"
         fi
         
         # Return to source directory
