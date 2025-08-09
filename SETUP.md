@@ -53,6 +53,13 @@ manimdemo/
 
 ## Usage After Setup
 
+### Building is Not yet implemented!!
+- Below is the actual build command that works
+- This need to be run  **MANUALLY** in the lib source directory, the script is acting weird on this
+```
+python3 -m pip install build && python3 -m build && python3 -m pip install dist/*.whl
+```
+
 ### Activate Environment
 ```bash
 source manimgl/bin/activate
