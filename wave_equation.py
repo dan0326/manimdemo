@@ -1,4 +1,4 @@
-from manimlib import *
+from manimlib_import_ext import *
 
 #funcions to get the curve on complex plain
 def get_complex_graph(axes, func, delta_x=0.01):

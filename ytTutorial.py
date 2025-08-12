@@ -1,4 +1,4 @@
-from manimlib import *
+from manimlib_import_ext import *
 from scipy.integrate import solve_ivp
 
 def lorenz_system(t, state, sigma=10, rho=28, beta=8/3):
@@ -52,9 +52,9 @@ class LorenzAttractor(InteractiveScene):
 
         #Display Solutions
         epsilon = 0.001
-        evolution_time = 20
-        states = [[10, 10, 10+ n *epsilon] for n in range(2)]
-        colors = color_gradient([BLUE, YELLOW], len(states))
+        evolution_time = 15
+        states = [[10, 10, 10+ n *epsilon] for n in range(3)]
+        colors = color_gradient([BLUE, RED_E], len(states))
         curves = VGroup()
         for state, color in zip(states, colors):
             points = ode_solution_points(lorenz_system, state, evolution_time)
