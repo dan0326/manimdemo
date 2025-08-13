@@ -19,7 +19,7 @@ class UpperHalfSphere(ThreeDScene):
 
         # Add a line segment
         line = Line(ORIGIN, axes.c2p(2, 3, 4), color=RED)
-        self.add(line)
+        #self.add(line)
 
         # Parametric surface: u=polar angle [0, π/2], v=azimuthal [0, 2π]
         sphere = ParametricSurface(
@@ -34,7 +34,7 @@ class UpperHalfSphere(ThreeDScene):
             color=BLUE_E,
             opacity=0.5
         )
-        self.add(sphere)
+        #self.add(sphere)
 
         plane1 = ParametricSurface(
             lambda u, v: np.array([u,v, 1-u-v]),
@@ -44,7 +44,7 @@ class UpperHalfSphere(ThreeDScene):
             color=YELLOW_E,
             opacity=0.5,
         )
-        self.add(plane1)
+        #self.add(plane1)
 
         #add plane2 along with its mesh
         plane2 = ParametricSurface(
@@ -55,9 +55,10 @@ class UpperHalfSphere(ThreeDScene):
             opacity=0.8)
         surface2 = SurfaceMesh(plane2,
             resolution=(30, 30), 
-            stroke_width=1.5,
-            stroke_color=GREY_C)
+            stroke_width=1,
+            stroke_color=GREY_A)
         surfaceWmesh2 = Group(plane2, surface2)
+        plane2.set_color_by_xyz_func("z")
         self.add(surfaceWmesh2)
 
         #add plane3
@@ -69,9 +70,10 @@ class UpperHalfSphere(ThreeDScene):
             opacity=0.8)
         surface3 = SurfaceMesh(plane3,
             resolution=(30, 30),
-            stroke_width=1.5,
+            stroke_width=1,
             stroke_color=GREY_C)
         surfaceWmesh3 = Group(plane3, surface3)
+        plane3.set_color_by_xyz_func("z", min_value=-10, max_value=10)
         self.add(surfaceWmesh3)
 
         self.play(ReplacementTransform(surfaceWmesh2, surfaceWmesh3))
