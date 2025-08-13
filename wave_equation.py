@@ -41,8 +41,8 @@ class SchrodingerPlay(InteractiveScene):
         for x in range(1, 10):
             plane = ComplexPlane(
                 (-x_max, x_max), (-x_max, x_max),
-                background_line_style=dict(stroke_color=BLUE, stroke_width=1, stroke_opacity=1),
-                faded_line_style=dict(stroke_color=BLUE,stroke_width=1, stroke_opacity=0.5),
+                background_line_style=dict(stroke_color=BLUE, stroke_width=1.5, stroke_opacity=1),
+                faded_line_style=dict(stroke_color=BLUE,stroke_width=1.5, stroke_opacity=0.5),
                 height=6,
                 width=6
             )
@@ -60,7 +60,7 @@ class SchrodingerPlay(InteractiveScene):
         w=1
         t_tracker = ValueTracker(0)
         get_t = t_tracker.get_value
-        time_label = Tex("{time = 0.00}")
+        time_label = Tex("time = 0.00")
         time_label.to_corner(UR)
         time_label.fix_in_frame()
         time_value = time_label.make_number_changeable("0.00")
@@ -72,11 +72,10 @@ class SchrodingerPlay(InteractiveScene):
             return A * np.exp(1j *(k*x-w*t))
         graph= always_redraw(lambda: get_complex_graph(axes, plane_wave))
         self.add(graph)
-        self.play(t_tracker.animate.set_value(3), run_time = 3, rate_func = linear)
 
         #add solutioin arrow on one plane
         x=axes.x_axis.p2n(plane.get_center())
-        z_vect = get_complex_vector(plane, plane_wave(x))
+        z_vect = always_redraw(lambda: get_complex_vector(plane, plane_wave(x)))
         z_dot = GlowDot()
         z_dot.f_always.move_to(lambda: z_vect.get_end())
         self.add(z_vect)
@@ -87,8 +86,10 @@ class SchrodingerPlay(InteractiveScene):
             return -1 *(k**2) * plane_wave(x)
         def ddt_psi(x):
             return -1j * laplacian(x)
-        l_vect = get_complex_vector(plane, laplacian(x), color=BLUE)
-        dt_vect = get_complex_vector(plane, ddt_psi(x), color=YELLOW)
+        l_vect = always_redraw(lambda: get_complex_vector(plane, laplacian(x), color=BLUE))
+        dt_vect = always_redraw(lambda: get_complex_vector(plane, ddt_psi(x), color=TEAL))
+        l_vect.suspend_updating()
+        dt_vect.suspend_updating()
         self.play(
             self.frame.animate.reorient(71, 77, 0, (np.float32(-0.63), np.float32(-0.27), np.float32(0.61)), 3.38),
             run_time =2)
@@ -96,6 +97,10 @@ class SchrodingerPlay(InteractiveScene):
         self.wait()
         self.play(TransformFromCopy(l_vect, dt_vect))
         self.wait()
+        self.play(dt_vect.animate.shift(z_vect.get_vector()))
         self.add(dt_vect)
+        l_vect.resume_updating()
+        dt_vect.resume_updating()
+        dt_vect.add_updater(lambda m: m.shift(z_vect.get_vector()))
 
-
+        self.play(t_tracker.animate.set_value(3), run_time = 3, rate_func = linear)
