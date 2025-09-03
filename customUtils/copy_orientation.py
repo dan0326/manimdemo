@@ -8,9 +8,7 @@ def copy_frame_positioning(self):
     call = f"reorient("
     theta, phi, gamma = (angles / DEG).astype(int)
     call += f"{theta}, {phi}, {gamma}"
-    if any(center != 0):
-        call += f", {tuple(np.round(center, 2))}"
-    if height != FRAME_HEIGHT:
-        call += ", {:.2f}".format(height)
+    call += f", {tuple(np.round(center, 2))}"
+    call += ", {:.2f}".format(height)
     call += ")"
     pyperclip.copy(call)
