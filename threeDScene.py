@@ -36,15 +36,27 @@ class UpperHalfSphere(ThreeDScene):
         )
         #self.add(sphere)
 
+        #test plane1
         plane1 = ParametricSurface(
             lambda u, v: np.array([u,v, 1-u-v]),
-            u_range=(-2, 2),
-            v_range=(-2, 2),
+            u_range=(-5, 5),
+            v_range=(-5, 5),
             resolution=(30, 30),
             color=YELLOW_E,
-            opacity=0.5,
+            opacity=0.4,
         )
-        #self.add(plane1)
+        plane1.set_color_by_xyz_func("z", colormap="turbo")
+        self.add(plane1)
+
+        #plane 1 prime
+        planeh = ParametricSurface(
+            lambda u, v: (u, v, 5+u-v),
+            u_range=(-5, 5),
+            v_range=(-5, 5),
+            resolution = (30, 30),
+            opacity=0.5)
+        planeh.set_color_by_xyz_func("z")
+        self.add(planeh)
 
         #add plane2 along with its mesh
         plane2 = ParametricSurface(
