@@ -10,21 +10,21 @@ class GraphExample(Scene):
         sin_graph = axes.get_graph(
             lambda x: 2*math.sin(x),
             color=BLUE)
-        sin_label = axes.get_graph_label(sin_graph, Text("sin(x)"))
+        sin_label = axes.get_graph_label(sin_graph, Tex("sin(x)"))
 
         #add relu graph N label
         relu_graph = axes.get_graph(
             lambda x : max(x, 0),
             use_smoothing=False,
             color=YELLOW)
-        relu_label = axes.get_graph_label(relu_graph, Text("ReLU"))
+        relu_label = axes.get_graph_label(relu_graph, Tex("ReLU"))
 
         #add step garph N label
         step_graph = axes.get_graph(
             lambda x: 2.0 if x >3 else 1.0,
             discontinuities=[3],
             color=GREEN)
-        step_label = axes.get_graph_label(step_graph, Text("step"))
+        step_label = axes.get_graph_label(step_graph, Tex("step"))
 
         self.play(
             ShowCreation(sin_graph),
