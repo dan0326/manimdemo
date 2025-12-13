@@ -96,6 +96,7 @@ class HuffmanHardware(Scene):
             
             anims = []
             new_rows_v = create_row_visuals(new_data_list)
+            replacements = {}  # Store (row_idx, new_text_mobj) for cleanup
             
             for row_idx in idx_list:
                 old_row = row_visuals[row_idx]
@@ -104,12 +105,59 @@ class HuffmanHardware(Scene):
                 # Highlight effect
                 rect = SurroundingRectangle(old_row, color=YELLOW)
                 anims.append(ShowCreationThenDestruction(rect))
-                anims.append(Transform(old_row, new_row))
                 
-                # Update underlying data
+                # Update underlying data reference immediately
+                old_data = hw_data[row_idx]
+                new_data = new_data_list[row_idx]
+                
+                # 1. Transform non-HC columns (ID, CNT, M)
+                # Structure: 0=ID, 1=CNT, 2=M, 3=HC
+                for i in range(3):
+                    anims.append(Transform(old_row[i], new_row[i]))
+
+                # 2. Handle HC Column
+                old_hc_str = old_data['hc']
+                new_hc_str = new_data['hc']
+                
+                # Check for append condition: Old is prefix of New, and New is longer
+                is_append = (old_hc_str and new_hc_str and 
+                             new_hc_str.startswith(old_hc_str) and 
+                             len(new_hc_str) > len(old_hc_str))
+                
+                if is_append:
+                    # Append Logic: Transform prefix, Fly In suffix
+                    split_idx = len(old_hc_str)
+                    target_hc = new_row[3]
+                    
+                    target_prefix = target_hc[:split_idx]
+                    target_suffix = target_hc[split_idx:]
+                    
+                    # Transform old text to match the new prefix's position/style
+                    anims.append(Transform(old_row[3], target_prefix))
+                    
+                    # Fly in the new suffix from the right (moving LEFT)
+                    anims.append(FadeIn(target_suffix, shift=LEFT))
+                    
+                    # Mark for cleanup
+                    replacements[row_idx] = target_hc
+                else:
+                    # Standard Transform
+                    anims.append(Transform(old_row[3], new_row[3]))
+                
+                # Update main data list
                 hw_data[row_idx] = new_data_list[row_idx]
             
             self.play(*anims)
+            
+            # Post-animation cleanup: Ensure row_visuals points to the correct new objects
+            for r_idx, new_text_obj in replacements.items():
+                row_grp = row_visuals[r_idx]
+                old_text_obj = row_grp[3]
+                
+                # Swap in the clean new object
+                row_grp.remove(old_text_obj)
+                row_grp.add(new_text_obj)
+                self.add(new_text_obj)  # Ensure it's in the scene
 
         # ==========================================
         # ITERATION 1
@@ -183,7 +231,6 @@ class HuffmanHardware(Scene):
         # Update map for next round
         node_circles[2] = parent1 # Node 2 is now represented by this parent
         
-        self.play(ApplyMethod(p1_idx.shift, LEFT * 0.5))
         self.wait(1)
 
         # ==========================================
@@ -241,9 +288,13 @@ class HuffmanHardware(Scene):
         new_data_2[1]['m'] = 2
         new_data_2[1]['hc'] = "00"
         
-        self.play(FadeOut(logic_text)) # Clear old text
-        logic_text_2 = Text("Update all in Group #2 -> add '0'\nUpdate #3 -> add '1'", font_size=24).next_to(iter1_text, DOWN)
-        self.play(Write(logic_text_2))
+        # self.play(FadeOut(logic_text)) # Clear old text
+        logic_text_2 = Text("ALL in Group #2 -> add 0", font_size=24).next_to(iter1_text, DOWN)
+        logic_text_2p = Text("#3->add 1", font_size=24).next_to(logic_text_2, DOWN*0.5)
+        logic_text_2_group = VGroup(logic_text_2, logic_text_2p);
+        logic_text_2_group.shift(RIGHT*0.5)
+        self.play(Write(logic_text_2_group))
+        self.wait(2)
         
         # We update all 3 rows because #1 is inside group #2 and gets updated too
         animate_register_update([0, 1, 2], new_data_2)
@@ -263,6 +314,7 @@ class HuffmanHardware(Scene):
         t_grp_val = Text("0", font_size=20, color=RED).move_to(l_grp.get_center()+LEFT*0.3)
         
         self.play(
+            ApplyMethod(p1_idx.shift, LEFT * 0.5),
             ShowCreation(l3), ShowCreation(l_grp),
             FadeIn(r_grp),
             Write(t_3_val), Write(t_grp_val),
@@ -278,7 +330,7 @@ class HuffmanHardware(Scene):
         final_txt = Text("Final Output Registers", font_size=30).next_to(final_box, DOWN)
         
         self.play(
-            FadeOut(iter1_text), FadeOut(logic_text_2),
+            FadeOut(iter1_text), FadeOut(logic_text_2_group),
             ShowCreation(final_box), Write(final_txt)
         )
         
