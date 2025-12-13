@@ -1,6 +1,9 @@
+# the window section are specific for 15" macbook
 window:
   full_screen: False
-  position: (1280, 0)
+  size: (1710, 1000) 
+  position: (855,0)
+  #position_string: "UR"
 camera:
   background_color: "#000000"
   fps: 60
