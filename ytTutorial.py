@@ -74,3 +74,5 @@ class LorenzAttractor(InteractiveScene):
             ),
             self.frame.animate.reorient(170, 72, 0, (0, 0, -1), 10),
         run_time=evolution_time)
+
+        
