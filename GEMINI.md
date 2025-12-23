@@ -10,8 +10,10 @@ This project uses the Manim library to create mathematical animations.
 
 To render and view an animation, use the following command structure. Remember to replace `your_script.py` and `YourSceneName` accordingly.
 
+**Important:** Always use the local executable located at `./manimgl/bin/manimgl`.
+
 ```bash
-manimgl your_script.py YourSceneName
+./manimgl/bin/manimgl your_script.py YourSceneName
 ```
 
 ## Coding Conventions & Templates
