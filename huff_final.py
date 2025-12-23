@@ -9,10 +9,7 @@ class HuffmanHardware(Scene):
         # Title
         title = Text("Huffman Hardware: Register Logic", font_size=40)
         title.to_edge(UP)
-        subtitle = Text("Logic: Min1 (Smallest) -> Branch '1' | Min2 (2nd Smallest) -> Branch '0'", 
-                        font_size=24, color=GREY_B)
-        subtitle.next_to(title, DOWN)
-        self.play(Write(title), Write(subtitle))
+        self.play(Write(title))
 
         # --- Data Structure for Hardware State ---
         # We simulate the hardware arrays here
@@ -40,7 +37,6 @@ class HuffmanHardware(Scene):
         self.play(Write(headers), ShowCreation(h_line))
 
         # Row creation helper
-        rows = []
         row_start_y = h_line.get_y() - 0.5
         
         def create_row_visuals(data_list):
@@ -136,7 +132,7 @@ class HuffmanHardware(Scene):
                     anims.append(Transform(old_row[3], target_prefix))
                     
                     # Fly in the new suffix from the right (moving LEFT)
-                    anims.append(FadeIn(target_suffix, shift=LEFT))
+                    anims.append(FadeIn(target_suffix, shift=LEFT, run_time=2))
                     
                     # Mark for cleanup
                     replacements[row_idx] = target_hc
@@ -164,7 +160,7 @@ class HuffmanHardware(Scene):
         # ==========================================
         # Logic: Compare #1(2) and #2(3) -> Min1=#1, Min2=#2
         
-        iter1_text = Text("Iteration 1: Find 2 Smallest", font_size=28, color=YELLOW).to_edge(LEFT).shift(UP*2)
+        iter1_text = Text("Iteration 1: Find 2 Smallest", font_size=28, color=YELLOW).to_edge(LEFT).shift(UP*2.5)
         self.play(Write(iter1_text))
         
         # 1. Highlight Min1 and Min2 in Table
@@ -183,7 +179,7 @@ class HuffmanHardware(Scene):
         logic_text = Text(
             "Min1 (2) gets bit '1'\nMin2 (3) gets bit '0'", 
             font_size=24, color=WHITE
-        ).next_to(iter1_text, DOWN)
+        ).next_to(iter1_text, DOWN, buff=0.3)
         self.play(Write(logic_text))
 
         # 3. Perform Merge (Update Registers)
@@ -204,6 +200,21 @@ class HuffmanHardware(Scene):
         new_data[1]['hc'] = "0" # Actually remains 0 in value, but length 1
         
         self.play(FadeOut(logic_text))
+
+        # Addition Animation: 2 (from #1) moves to 3 (at #2)
+        add_src = row_visuals[0][1].copy()
+        add_dst = row_visuals[1][1]
+        
+        # Create text "2+3"
+        add_text = Text(f"{hw_data[0]['cnt']}+{hw_data[1]['cnt']}", font_size=24, color=YELLOW)
+        add_text.move_to(add_dst.get_center())
+        
+        self.play(add_src.animate.move_to(add_dst.get_center()), run_time=0.8)
+        self.play(Transform(add_src, add_text), FadeOut(add_dst))
+        self.wait(0.5)
+        self.remove(add_src, add_text)
+        self.add(add_dst) # Restore original before update transforms it
+
         animate_register_update([0, 1], new_data)
         
         # 4. Visual Tree Merge
@@ -221,10 +232,15 @@ class HuffmanHardware(Scene):
         t_1 = Text("1", font_size=22, color=GREEN).move_to(l1.get_center()+LEFT*0.3)
         t_0 = Text("0", font_size=22, color=RED).move_to(l2.get_center()+RIGHT*0.3)
         
+        bg_1 = SurroundingRectangle(t_1, color=BLACK, fill_opacity=0.7, buff=0.05).set_stroke(width=0)
+        bg_0 = SurroundingRectangle(t_0, color=BLACK, fill_opacity=0.7, buff=0.05).set_stroke(width=0)
+        t_1.add_to_back(bg_1)
+        t_0.add_to_back(bg_0)
+        
         self.play(
             ShowCreation(l1), ShowCreation(l2), 
             FadeIn(p1_grp), Write(p1_idx),
-            Write(t_1), Write(t_0),
+            FadeIn(t_1, scale=3), FadeIn(t_0, scale=3),
             FadeOut(rect_min1), FadeOut(rect_min2), FadeOut(label_min1), FadeOut(label_min2)
         )
         
@@ -239,7 +255,7 @@ class HuffmanHardware(Scene):
         # Active Nodes: #2 (Freq 5), #3 (Freq 4)
         # Compare: 4 < 5. Min1 = #3, Min2 = #2
         
-        iter2_text = Text("Iteration 2: #3(4) vs #2(5)", font_size=28, color=YELLOW).to_edge(LEFT).shift(UP*2)
+        iter2_text = Text("Iteration 2: #3(4) vs #2(5)", font_size=28, color=YELLOW).to_edge(LEFT).shift(UP*2.5)
         self.play(Transform(iter1_text, iter2_text))
         
         # 1. Highlight
@@ -289,13 +305,27 @@ class HuffmanHardware(Scene):
         new_data_2[1]['hc'] = "00"
         
         # self.play(FadeOut(logic_text)) # Clear old text
-        logic_text_2 = Text("ALL in Group #2 -> add 0", font_size=24).next_to(iter1_text, DOWN)
-        logic_text_2p = Text("#3->add 1", font_size=24).next_to(logic_text_2, DOWN*0.5)
+        logic_text_2 = Text("ALL in Group #2 -> add 0", font_size=24).next_to(iter1_text, DOWN, buff=0.3)
+        logic_text_2p = Text("#3->add 1", font_size=24).next_to(logic_text_2, DOWN, buff=0.2)
         logic_text_2_group = VGroup(logic_text_2, logic_text_2p);
         logic_text_2_group.shift(RIGHT*0.5)
         self.play(Write(logic_text_2_group))
         self.wait(2)
         
+        # Addition Animation: 4 (from #3) moves to 5 (at #2)
+        add_src_2 = row_visuals[2][1].copy()
+        add_dst_2 = row_visuals[1][1]
+        
+        # Create text "4+5"
+        add_text_2 = Text(f"{hw_data[2]['cnt']}+{new_data[1]['cnt']}", font_size=24, color=YELLOW)
+        add_text_2.move_to(add_dst_2.get_center())
+        
+        self.play(add_src_2.animate.move_to(add_dst_2.get_center()), run_time=0.8)
+        self.play(Transform(add_src_2, add_text_2), FadeOut(add_dst_2))
+        self.wait(0.5)
+        self.remove(add_src_2, add_text_2)
+        self.add(add_dst_2)
+
         # We update all 3 rows because #1 is inside group #2 and gets updated too
         animate_register_update([0, 1, 2], new_data_2)
         
@@ -312,6 +342,11 @@ class HuffmanHardware(Scene):
         
         t_3_val = Text("1", font_size=20, color=GREEN).move_to(l3.get_center()+RIGHT*0.3)
         t_grp_val = Text("0", font_size=20, color=RED).move_to(l_grp.get_center()+LEFT*0.3)
+        
+        bg_3 = SurroundingRectangle(t_3_val, color=BLACK, fill_opacity=0.7, buff=0.05).set_stroke(width=0)
+        bg_grp = SurroundingRectangle(t_grp_val, color=BLACK, fill_opacity=0.7, buff=0.05).set_stroke(width=0)
+        t_3_val.add_to_back(bg_3)
+        t_grp_val.add_to_back(bg_grp)
         
         self.play(
             ApplyMethod(p1_idx.shift, LEFT * 0.5),
@@ -334,4 +369,4 @@ class HuffmanHardware(Scene):
             ShowCreation(final_box), Write(final_txt)
         )
         
-        self.wait(3)
+        self.wait(2)
