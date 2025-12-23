@@ -8,3 +8,9 @@ camera:
   background_color: "#000000"
   fps: 60
   background_opacity: 1.0
+universal_import_line: "from manimlib_import_ext import *"
+file_writer:
+  saturation: 1.5
+directories:
+  # This is the main folder where videos will be saved
+  output: "/Users/daniel/Movies/math"
