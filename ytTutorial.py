@@ -62,7 +62,6 @@ class LorenzAttractor(InteractiveScene):
             curve.set_stroke(color, 2)
             curves.add(curve)
         dots = Group(GlowDots(color= color) for color in colors)
-        globals().update(locals())
         def update_dots(dots):
             for dot, curve in zip(dots, curves):
                 dot.move_to(curve.get_end())
