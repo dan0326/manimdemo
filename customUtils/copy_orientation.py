@@ -1,3 +1,4 @@
+import re
 from manimlib import *
 
 def copy_frame_positioning(self):
@@ -11,4 +12,6 @@ def copy_frame_positioning(self):
     call += f", {tuple(np.round(center, 2))}"
     call += ", {:.2f}".format(height)
     call += ")"
+    pattern = r"np\.float32\(([^)]+)\)"
+    call = re.sub(pattern, r"\1", call) # use regex to remove np.flaot()
     pyperclip.copy(call)
