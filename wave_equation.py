@@ -52,7 +52,7 @@ class SchrodingerPlay(InteractiveScene):
             planes.add(plane)
         plane= planes[2]
         self.add(plane)
-        self.frame.reorient(45, 88, 0, (np.float32(0.0), np.float32(0.23), np.float32(0.49)), 8.00)
+        self.frame.reorient(45, 88, 0, (0.0, 0.23, 0.49), 8.00)
 
         #show graph of one solution
         A=1
@@ -91,7 +91,7 @@ class SchrodingerPlay(InteractiveScene):
         l_vect.suspend_updating()
         dt_vect.suspend_updating()
         self.play(
-            self.frame.animate.reorient(71, 77, 0, (np.float32(-0.63), np.float32(-0.27), np.float32(0.61)), 3.38),
+            self.frame.animate.reorient(71, 77, 0, (-0.63, -0.27, 0.61), 3.38),
             run_time =2)
         self.play(GrowArrow(l_vect))
         self.wait()
