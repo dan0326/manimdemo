@@ -34,7 +34,7 @@ class UpperHalfSphere(ThreeDScene):
             color=BLUE_E,
             opacity=0.5
         )
-        #self.add(sphere)
+        # self.add(sphere)
 
         #test plane1
         plane1 = ParametricSurface(
@@ -90,6 +90,3 @@ class UpperHalfSphere(ThreeDScene):
 
         self.play(ReplacementTransform(surfaceWmesh2, surfaceWmesh3))
 
-        
-
-        self.camera.get_location()
