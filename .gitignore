@@ -4,3 +4,4 @@ custom_config.yml
 .DS_store
 videos/
 manimgl/
+latex_cache/
