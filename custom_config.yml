@@ -1,16 +1,13 @@
-# the window section are specific for 15" macbook
+universal_import_line: "from manim_imports_ext import *"
+text:
+  font: "CMU Serif"
+  text_alignment: "CENTER"
 window:
+  position_string: UR
+  monitor_index: 0
   full_screen: False
-  size: (1710, 1000) 
-  position: (855,0)
-  #position_string: "UR"
 camera:
   background_color: "#000000"
+  resolution: (3840, 2160)
   fps: 60
   background_opacity: 1.0
-universal_import_line: "from manimlib_import_ext import *"
-file_writer:
-  saturation: 1.5
-directories:
-  # This is the main folder where videos will be saved
-  output: "/Users/daniel/Movies/math"
